@@ -1,0 +1,26 @@
+[Libraries]
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+
+[Visual Studio]
+.vs/
+*.csproj
+*.sln
+*.user
+*.unityproj
+
+[Unity]
+*.pidb
+*.booproj
+*.svd
+*.userprefs
+*.db
+*.opendb
+*.DS_Store
+*.apk
+*.unitypackage
+*.log
