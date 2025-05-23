@@ -6,6 +6,7 @@ public class MarioMovement : MonoBehaviour
     public float jumpPower = 10f;  // 점프 파워 추가
     public Rigidbody2D rb;
     public Animator animator;
+    public int coinCount = 0;
 
     // GroundCheck 관련 변수
     public Transform groundCheck;
@@ -67,4 +68,19 @@ public class MarioMovement : MonoBehaviour
             rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
         }
     }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Dead"))
+        {
+            Debug.Log("낙사!");
+            gameObject.SetActive(false);
+        }
+        else if (other.CompareTag("coin"))
+        {
+            coinCount++;
+            Destroy(other.gameObject);
+            // 사운드 재생도 여기에!
+        }
+    }
+
 }
