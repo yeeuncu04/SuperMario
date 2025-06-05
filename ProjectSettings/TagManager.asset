@@ -8,6 +8,7 @@ TagManager:
   - Dead
   - Coin
   - coin
+  - ItemTilemap
   layers:
   - Default
   - TransparentFX

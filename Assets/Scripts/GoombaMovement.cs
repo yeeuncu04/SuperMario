@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GoombaMovement : MonoBehaviour
 {
-    public float speed = 1f;          // �̵� �ӵ�
+    public float speed = 0.01f;          // �̵� �ӵ�
     private bool movingRight = true;  // �̵� ����
     private Rigidbody2D rb;
     private Animator animator;
