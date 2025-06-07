@@ -381,7 +381,7 @@ GameObject:
   - component: {fileID: 90959328}
   m_Layer: 0
   m_Name: Goomba
-  m_TagString: Untagged
+  m_TagString: Goomba
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -907,7 +907,7 @@ GameObject:
   - component: {fileID: 340813122}
   m_Layer: 3
   m_Name: Grid
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4934,7 +4934,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 120, y: 165}
+  m_AnchoredPosition: {x: 125, y: 160}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &437293170
@@ -5608,7 +5608,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -130, y: 150}
+  m_AnchoredPosition: {x: -90, y: 150}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &547091210
@@ -6280,7 +6280,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 140, y: 140}
+  m_AnchoredPosition: {x: 153, y: 137}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &772631910
@@ -6875,6 +6875,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 881761132}
   m_CullTransparentMesh: 1
+--- !u!1 &882589081
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 882589082}
+  m_Layer: 0
+  m_Name: RespawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &882589082
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882589081}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10, y: -3.2527065, z: -0.13331221}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &883592246
 GameObject:
   m_ObjectHideFlags: 0
@@ -7066,7 +7097,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -19, y: 138}
+  m_AnchoredPosition: {x: 20, y: 138}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1062631960
@@ -7235,7 +7266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &1093175132
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7291,7 +7322,7 @@ Transform:
   m_GameObject: {fileID: 1093175131}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: -6, z: 0}
+  m_LocalPosition: {x: 10, y: -7, z: 0}
   m_LocalScale: {x: 2.5, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7771,6 +7802,7 @@ GameObject:
   - component: {fileID: 1450313691}
   - component: {fileID: 1450313692}
   - component: {fileID: 1450313693}
+  - component: {fileID: 1450313694}
   m_Layer: 6
   m_Name: Mario
   m_TagString: Player
@@ -7958,11 +7990,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3fb9bae31d3c1b48a18ab04598fdae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  life: 3
   moveSpeed: 5
   jumpPower: 5
   rb: {fileID: 1450313690}
   animator: {fileID: 1450313685}
   coinCount: 0
+  gameOverUI: {fileID: 1081434045}
+  respawnPosition: {x: 0, y: 0, z: 0}
   groundCheck: {fileID: 883592247}
   checkRadius: 0.2
   whatIsGround:
@@ -8002,6 +8037,21 @@ MonoBehaviour:
   flag: {fileID: 433008408}
   flagLowerYPosition: -3
   walkDuration: 2.5
+  gameOverUI: {fileID: 1081434045}
+--- !u!114 &1450313694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450313684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b5f4a3c65ea184498f18b568d05fcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  life: 3
+  respawnPosition: {x: -10, y: -3.252707, z: 0}
   gameOverUI: {fileID: 1081434045}
 --- !u!1001 &1452909500
 PrefabInstance:
@@ -10412,7 +10462,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 312, y: 140}
+  m_AnchoredPosition: {x: 312, y: 135}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2110623997
@@ -10672,7 +10722,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: 165}
+  m_AnchoredPosition: {x: 300, y: 160}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2143194551
@@ -10871,3 +10921,4 @@ SceneRoots:
   - {fileID: 5946518}
   - {fileID: 1461727045}
   - {fileID: 2120240530}
+  - {fileID: 882589082}

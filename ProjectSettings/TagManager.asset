@@ -11,6 +11,8 @@ TagManager:
   - QustionBlock
   - Flag
   - Goal
+  - Enemy
+  - Goomba
   layers:
   - Default
   - TransparentFX

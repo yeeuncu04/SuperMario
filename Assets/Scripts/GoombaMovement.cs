@@ -55,4 +55,7 @@ public class GoombaMovement : MonoBehaviour
  
         Destroy(gameObject, 0.5f);
     }
+    
+
+
 }

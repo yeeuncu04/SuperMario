@@ -1,15 +1,18 @@
 using UnityEngine;
-using TMPro;  // 💡 TextMeshPro를 위해 필요!
+using TMPro;
+using System.Collections;
 
 public class MarioMovement : MonoBehaviour
 {
+    public int life = 3;
     public float moveSpeed = 5f;
     public float jumpPower = 10f;
     public Rigidbody2D rb;
     public Animator animator;
     public int coinCount = 0;
+    public GameObject gameOverUI;
+    public Vector3 respawnPosition;
 
-    // GroundCheck 관련 변수
     public Transform groundCheck;
     public float checkRadius = 0.2f;
     public LayerMask whatIsGround;
@@ -18,30 +21,37 @@ public class MarioMovement : MonoBehaviour
     private float moveInput;
     private SpriteRenderer spriteRenderer;
 
-    // 💛 UI 관련 변수들
-    public TextMeshProUGUI scoreValueText;    // 000000
-    public TextMeshProUGUI coinText;          // x00
-    public TextMeshProUGUI worldValueText;    // 1-1
-    public TextMeshProUGUI timeValueText;     // 300
+    public TextMeshProUGUI scoreValueText;
+    public TextMeshProUGUI coinText;
+    public TextMeshProUGUI worldValueText;
+    public TextMeshProUGUI timeValueText;
 
     private int score = 0;
     private float timeLeft = 300f;
 
+    // 상태 제어 변수
+    private bool isDead = false;
+    private bool isGameOver = false;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        respawnPosition = transform.position;
     }
 
     void Update()
     {
+        if (isDead || isGameOver) return;
+
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        // 점프
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
+            rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
         }
 
-        // 키 입력 체크
+        // 좌우 이동
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             moveInput = -1;
@@ -55,52 +65,84 @@ public class MarioMovement : MonoBehaviour
             moveInput = 0;
         }
 
-        // 이동
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-
-        // 애니메이터에 speed 값 전달
         animator.SetFloat("speed", Mathf.Abs(moveInput));
 
-        // 방향 전환
+        // 방향 반전
         if (moveInput > 0)
-        {
             spriteRenderer.flipX = false;
-        }
         else if (moveInput < 0)
-        {
             spriteRenderer.flipX = true;
-        }
 
-        // 점프
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-        }
-
-        // 💛 남은 시간 감소
+        // 시간 감소 및 UI 업데이트
         timeLeft -= Time.deltaTime;
         int intTime = Mathf.Max(0, Mathf.FloorToInt(timeLeft));
 
-        // 💛 UI 업데이트
-        scoreValueText.text = score.ToString("D6");       // 000000 형태
-        coinText.text = coinCount.ToString("D2");   // x00 형태
+        scoreValueText.text = score.ToString("D6");
+        coinText.text = coinCount.ToString("D2");
         worldValueText.text = "1-1";
         timeValueText.text = intTime.ToString();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (isDead || isGameOver) return;
+
         if (other.CompareTag("Dead"))
         {
-            Debug.Log("낙사!");
-            gameObject.SetActive(false);
+            StartCoroutine(HandleFallDeath());
         }
         else if (other.CompareTag("coin"))
         {
             coinCount++;
-            score += 100;  // 💛 점수도 추가
+            score += 100;
             Destroy(other.gameObject);
-            // 사운드도 여기에 추가 가능!
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (isDead || isGameOver) return;
+
+        if (collision.gameObject.CompareTag("Goomba"))
+        {
+            StartCoroutine(HandleFallDeath());
+        }
+    }
+
+    IEnumerator HandleFallDeath()
+    {
+        if (isDead || isGameOver) yield break;
+
+        isDead = true;
+        life--;
+        Debug.Log("데미지! 남은 생명: " + life);
+
+        if (life <= 0)
+        {
+            isGameOver = true;
+            gameOverUI.SetActive(true);
+
+            rb.linearVelocity = Vector2.zero;
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            GetComponent<Collider2D>().enabled = false;
+            animator.SetFloat("speed", 0f);
+            yield break;
+        }
+
+        // 낙사 연출
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(Vector2.down * 5f, ForceMode2D.Impulse);
+        GetComponent<Collider2D>().enabled = false;
+
+        yield return new WaitForSeconds(1f);
+
+        // 리스폰
+        transform.position = respawnPosition;
+        rb.linearVelocity = Vector2.zero;
+        GetComponent<Collider2D>().enabled = true;
+        animator.SetFloat("speed", 0f);
+
+        isDead = false;
     }
 }
