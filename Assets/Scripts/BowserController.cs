@@ -14,6 +14,7 @@ public class BowserController : MonoBehaviour
 
     void Update()
     {
+        if (player == null) return;
         if (Time.time >= nextFireTime)
         {
             ShootFire();

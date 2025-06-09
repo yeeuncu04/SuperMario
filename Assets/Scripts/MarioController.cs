@@ -67,7 +67,7 @@ public class MarioController : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         transform.position = respawnPosition;
-        animator.SetFloat("Speed", 0f);
+        animator.SetFloat("speed", 0f);
     }
 
 

@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class MarioFlagTrigger : MonoBehaviour
 {
-    public Transform flagBottomPoint;     // 마리오가 내려갈 위치 기준점
-    public float slideSpeed = 2f;         // 슬라이딩 속도
-    public float walkSpeed = 2f;          // 오른쪽 자동 걷기 속도
+    public Transform flagBottomPoint;
+    public float slideSpeed = 2f;
+    public float walkSpeed = 2f;
 
-    public Transform flag;                // 깃발 오브젝트
-    public float flagLowerYPosition;      // 깃발이 내려갈 최종 Y 좌표
+    public Transform flag;
+    public float flagLowerYPosition;
 
-    public float walkDuration = 2.5f;     // 걷는 시간 (성으로 들어가기까지 시간)
-    public GameObject gameOverUI;         // 게임오버 UI 오브젝트
+    public float walkDuration = 2.5f;
+    public GameObject gameOverUI;
 
     private bool isTouchingFlag = false;
     private bool isSlidingDown = false;
@@ -20,10 +20,14 @@ public class MarioFlagTrigger : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
 
+    public AudioClip goalMusic;
+    public AudioSource sfxSource; // 인스펙터에서 연결하도록 변경
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        // audioSource = GetComponent<AudioSource>(); // 제거
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -34,6 +38,14 @@ public class MarioFlagTrigger : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             rb.bodyType = RigidbodyType2D.Kinematic;
             animator.SetFloat("Speed", 0);
+
+            // 소리 재생
+            if (goalMusic != null && sfxSource != null)
+            {
+                sfxSource.Stop();
+                sfxSource.clip = goalMusic;
+                sfxSource.Play();
+            }
         }
     }
 
@@ -41,14 +53,12 @@ public class MarioFlagTrigger : MonoBehaviour
     {
         if (isTouchingFlag && !isSlidingDown)
         {
-            // 마리오 슬라이딩
             transform.position = Vector2.MoveTowards(
                 transform.position,
                 new Vector2(transform.position.x, flagBottomPoint.position.y),
                 slideSpeed * Time.deltaTime
             );
 
-            // 깃발 내려감
             if (flag != null)
             {
                 flag.position = Vector2.MoveTowards(
@@ -58,7 +68,6 @@ public class MarioFlagTrigger : MonoBehaviour
                 );
             }
 
-            // 슬라이딩 끝
             if (Mathf.Abs(transform.position.y - flagBottomPoint.position.y) < 0.05f)
             {
                 isSlidingDown = true;

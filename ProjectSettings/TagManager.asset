@@ -13,6 +13,8 @@ TagManager:
   - Goal
   - Enemy
   - Goomba
+  - QuestionBlock
+  - head
   layers:
   - Default
   - TransparentFX
