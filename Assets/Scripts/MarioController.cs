@@ -1,3 +1,4 @@
+//2
 using System.Collections;
 using UnityEngine;
 
@@ -43,7 +44,7 @@ public class MarioController : MonoBehaviour
         }
     }
 
-    IEnumerator KnockbackAndRespawn()
+   IEnumerator KnockbackAndRespawn()
     {
         // 1. 잠깐 떨어지는 애니메이션 대신 바로 아래로 떨어뜨리기
         float fallDistance = 3f; // 충분히 깊게 떨어지도록 y값 조절

@@ -8462,7 +8462,7 @@ MonoBehaviour:
   minX: -5
   maxX: 80
   minY: -2
-  maxY: 0.2
+  maxY: -1
 --- !u!4 &1204903654
 Transform:
   m_ObjectHideFlags: 0
@@ -8951,6 +8951,7 @@ MonoBehaviour:
   sfxSource: {fileID: 551145270}
   bgmSource: {fileID: 1571497236}
   isDead: 0
+  flagPole: {fileID: 0}
 --- !u!114 &1450313692
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -18,7 +18,6 @@ public class MarioMovement : MonoBehaviour
     public float checkRadius = 0.2f;
     public LayerMask whatIsGround;
     public bool isGrounded;
-   
 
     private float moveInput;
     private SpriteRenderer spriteRenderer;
@@ -47,6 +46,10 @@ public class MarioMovement : MonoBehaviour
     private bool isGameOver = false;
     private bool isCoinCollected = false;
 
+    // 깃발(레벨 클리어) 관련 변수 추가
+    private bool isLevelClear = false;
+    public Transform flagPole;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -63,8 +66,10 @@ public class MarioMovement : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log(jumpCount);
-        if (isDead || isGameOver) return;
+        if (isDead || isGameOver || isLevelClear) return;
+
+        timeLeft -= Time.deltaTime;
+        if (timeLeft < 0) timeLeft = 0;
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
 
@@ -101,8 +106,7 @@ public class MarioMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-
-        if (isDead || isGameOver) return;
+        if (isDead || isGameOver || isLevelClear) return;
 
         // 코인 먹었을 때
         if (other.CompareTag("coin") && !isCoinCollected)
@@ -121,8 +125,8 @@ public class MarioMovement : MonoBehaviour
 
         // 낙사 영역 (Fall) 들어갔을 때
         else if (other.CompareTag("Dead"))
-        { 
-                if (isDead) return;
+        {
+            if (isDead) return;
 
             if (hitClip != null && sfxSource != null)
                 sfxSource.PlayOneShot(hitClip);
@@ -143,31 +147,20 @@ public class MarioMovement : MonoBehaviour
             jumpCount = 0;
         }
 
-        if (isDead || isGameOver) return;
-
         if (other.CompareTag("head"))
         {
             if (transform.position.y > other.transform.position.y)
             {
-                Debug.Log("헤드 트리거 감지");
-
                 GoombaMovement goomba = other.GetComponent<GoombaMovement>();
                 if (goomba == null && other.transform.parent != null)
                 {
                     goomba = other.transform.parent.GetComponent<GoombaMovement>();
                 }
 
-                Debug.Log("GoombaMovement 컴포넌트 가져오기 시도: " + (goomba != null));
-
                 if (goomba != null)
                 {
                     goomba.OnStomped();
-                    Debug.Log("데미지! 남은 생명: " + life);
-                    //jumpCount = 0;
-                }
-                else
-                {
-                    Debug.LogWarning("GoombaMovement 컴포넌트를 찾지 못함!");
+                    AddScore(200);
                 }
             }
             else
@@ -179,6 +172,13 @@ public class MarioMovement : MonoBehaviour
             }
         }
 
+        // 깃발 닿으면 레벨 클리어 시퀀스 시작
+        if (other.CompareTag("Flag"))
+        {
+            isLevelClear = true;
+            isGameOver = true; // 입력 막기 위해 같이 설정
+            StartCoroutine(LevelClearSequence());
+        }
     }
 
     IEnumerator ResetCoinCollectedFlag()
@@ -187,49 +187,12 @@ public class MarioMovement : MonoBehaviour
         isCoinCollected = false;
     }
 
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (((1 << collision.gameObject.layer) & whatIsGround) != 0)
-    //    {
-    //        jumpCount = 0;
-    //    }
-
-    //    if (isDead || isGameOver) return;
-
-    //    if (collision.gameObject.CompareTag("head"))
-    //    {
-    //        if (collision.contacts[0].normal.y > 0.5f)
-    //        {
-    //            // 마리오가 위에서 밟음
-    //            //rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower * 0.8f);
-    //            Debug.Log("헤드");
-    //            GoombaMovement goomba = collision.gameObject.GetComponent<GoombaMovement>();
-    //            if (goomba != null)
-    //            {
-    //                goomba.OnStomped();
-    //                Debug.Log("데미지! 남은 생명: " + life);
-    //            }
-    //        }
-    //        else
-    //        {
-    //            // 마리오가 데미지 받음
-    //            if (hitClip != null && sfxSource != null)
-    //                sfxSource.PlayOneShot(hitClip);
-
-    //            StartCoroutine(HandleFallDeath());
-    //        }
-    //    }
-    //}
-
-
-
     public IEnumerator HandleFallDeath()
     {
         if (isDead || isGameOver) yield break;
 
         isDead = true;
         life--;
-        Debug.Log("데미지! 남은 생명: " + life);
 
         if (life <= 0)
         {
@@ -251,7 +214,6 @@ public class MarioMovement : MonoBehaviour
             if (gameOverClip != null && sfxSource != null)
                 sfxSource.PlayOneShot(gameOverClip);
 
-            Debug.Log("게임오버! 최종 점수: " + score);
             yield break;
         }
 
@@ -267,15 +229,13 @@ public class MarioMovement : MonoBehaviour
         // Rigidbody 상태 초기화
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 1f;
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation; // <- 이것도 꼭 해줘야 움직임이 복구돼
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // 콜라이더와 애니메이션 복구
         GetComponent<Collider2D>().enabled = true;
         animator.SetFloat("speed", 0f);
 
-        // 상태 복구
         isDead = false;
-
     }
 
     public void AddScore(int amount)
@@ -283,5 +243,51 @@ public class MarioMovement : MonoBehaviour
         score += amount;
         scoreValueText.text = score.ToString("D6");
         coinText.text = coinCount.ToString("D2");
+    }
+
+    // 레벨 클리어 후 자동 이동, 점수 계산, 시간 0 처리
+    IEnumerator LevelClearSequence()
+    {
+        // 깃발로 이동 (속도 조절)
+        float targetX = flagPole.position.x;
+        while (transform.position.x < targetX)
+        {
+            rb.linearVelocity = new Vector2(moveSpeed * 0.5f, rb.linearVelocity.y);
+            animator.SetFloat("speed", 0.5f);
+            yield return null;
+        }
+
+        rb.linearVelocity = Vector2.zero;
+        animator.SetFloat("speed", 0f);
+
+        // 점수 계산 코루틴 호출
+        yield return StartCoroutine(ScoreCalculation());
+
+        // 시간 0으로 만들기
+        timeLeft = 0f;
+        timeValueText.text = "0";
+        yield return null;
+        // 여기서 성 입장 애니메이션, 씬 전환 등 추가 가능
+    }
+
+    IEnumerator ScoreCalculation()
+    {
+        // 예: 코인, 적 처치 점수 외 시간 점수 더하기
+        int timeBonus = Mathf.FloorToInt(timeLeft) * 50;
+        int totalScore = score + timeBonus;
+
+        // 점수 UI 애니메이션 효과 간단히 구현 (예시)
+        int displayedScore = score;
+        while (displayedScore < totalScore)
+        {
+            displayedScore += 100;
+            if (displayedScore > totalScore) displayedScore = totalScore;
+
+            scoreValueText.text = displayedScore.ToString("D6");
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        // 최종 점수 저장
+        score = totalScore;
     }
 }

@@ -11,16 +11,17 @@ public class Fireball : MonoBehaviour
             MarioMovement mario = other.GetComponent<MarioMovement>();
             if (mario != null)
             {
+                // 소리 재생
+                if (mario.hitClip != null && mario.sfxSource != null)
+                {
+                    mario.sfxSource.PlayOneShot(mario.hitClip);
+                }
+
                 Debug.Log("마리오에 HandleFallDeath 호출!");
                 mario.StartCoroutine(mario.HandleFallDeath());
             }
 
-            // 불은 마리오랑 부딪힌 후 사라지도록 설정
-            Destroy(gameObject);
+            Destroy(gameObject); // 불 사라지게
         }
-        //else if (!other.isTrigger) // 벽 등과 부딪히면 불 삭제
-        //{
-          //  Destroy(gameObject);
-        //}
     }
 }

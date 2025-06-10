@@ -10,6 +10,7 @@ public class GoombaMovement : MonoBehaviour
     public Transform leftSpot;
     public Transform rightSpot;
     public Sprite squashedSprite;
+    private bool isDead = false;
 
     void Start()
     {
@@ -57,26 +58,36 @@ public class GoombaMovement : MonoBehaviour
 
     public void OnStomped()
     {
-        Debug.Log("활성");
-        animator.SetTrigger("Die");
+        if (isDead) return;
+        isDead = true;
+
+        Debug.Log("굼바가 밟혔어요!");
+
+        // Animator 끄기
+        Animator animator = GetComponent<Animator>();
+        if (animator != null) animator.enabled = false;
+
+        // SpriteRenderer에 squashedSprite 적용
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null && squashedSprite != null)
+        {
+            sr.sprite = squashedSprite;
+        }
+        else
+        {
+            Debug.LogWarning("SpriteRenderer나 squashedSprite가 null입니다!");
+        }
+
         rb.linearVelocity = Vector2.zero;
-        GetComponent<Collider2D>().enabled = false;
-
-
-        //Destroy(gameObject, 0.5f);
-        // 스프라이트를 찌그러진 걸로 바꿔
-        GetComponent<SpriteRenderer>().sprite = squashedSprite;
-
-        // 움직임 멈추고 콜라이더 끄기
-        rb.linearVelocity = Vector2.zero;
-        GetComponent<Collider2D>().enabled = false;
-
-        // 아래로 떨어지도록 중력 증가
         rb.gravityScale = 5f;
 
-        // 1.5초 후 파괴
-        Destroy(gameObject, 1.5f);
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        Destroy(gameObject, 0.5f);
     }
+
+
 
 
 }
