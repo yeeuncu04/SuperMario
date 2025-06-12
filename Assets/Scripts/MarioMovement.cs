@@ -85,6 +85,8 @@ public class MarioMovement : MonoBehaviour
                 sfxSource.PlayOneShot(jumpClip);
         }
 
+        
+
         if (Input.GetKey(KeyCode.LeftArrow)) moveInput = -1;
         else if (Input.GetKey(KeyCode.RightArrow)) moveInput = 1;
         else moveInput = 0;
@@ -162,6 +164,7 @@ public class MarioMovement : MonoBehaviour
                     goomba.OnStomped();
                     AddScore(200);
                 }
+
             }
             else
             {
@@ -176,11 +179,11 @@ public class MarioMovement : MonoBehaviour
         if (other.CompareTag("Flag"))
         {
             isLevelClear = true;
-            isGameOver = true; // 입력 막기 위해 같이 설정
+            isGameOver = true; 
             StartCoroutine(LevelClearSequence());
         }
     }
-
+    // 입력 막기 위해 같이 설정
     IEnumerator ResetCoinCollectedFlag()
     {
         yield return new WaitForSeconds(0.1f);
@@ -223,15 +226,15 @@ public class MarioMovement : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // 리스폰
+
         transform.position = respawnPosition;
 
-        // Rigidbody 상태 초기화
+      
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 1f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        // 콜라이더와 애니메이션 복구
+       
         GetComponent<Collider2D>().enabled = true;
         animator.SetFloat("speed", 0f);
 
@@ -290,4 +293,12 @@ public class MarioMovement : MonoBehaviour
         // 최종 점수 저장
         score = totalScore;
     }
+    public void Die()
+    {
+        if (!isDead && !isGameOver)
+        {
+            StartCoroutine(HandleFallDeath());
+        }
+    }
+
 }

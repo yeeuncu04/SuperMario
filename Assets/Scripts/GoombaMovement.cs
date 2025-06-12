@@ -32,27 +32,12 @@ public class GoombaMovement : MonoBehaviour
             Flip();
         }
 
-        //RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, 1f);
-        //if (groundInfo.collider == false)
-        //{
-        //    Flip();
-        //}
-
-
-        //RaycastHit2D wallInfo = Physics2D.Raycast(transform.position, movingRight ? Vector2.right : Vector2.left, 0.1f);
-        //if (wallInfo.collider != null && !wallInfo.collider.CompareTag("Player"))
-        //{
-        //    Flip();
-        //}
-
         animator.SetFloat("Speed", Mathf.Abs(speed));
     }
 
     void Flip()
     {
         movingRight = !movingRight;
-        //Vector3 localScale = transform.localScale; 
-        //transform.localScale = localScale;
     }
 
 
@@ -61,21 +46,12 @@ public class GoombaMovement : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        Debug.Log("굼바가 밟혔어요!");
-
-        // Animator 끄기
         Animator animator = GetComponent<Animator>();
         if (animator != null) animator.enabled = false;
-
-        // SpriteRenderer에 squashedSprite 적용
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null && squashedSprite != null)
         {
             sr.sprite = squashedSprite;
-        }
-        else
-        {
-            Debug.LogWarning("SpriteRenderer나 squashedSprite가 null입니다!");
         }
 
         rb.linearVelocity = Vector2.zero;
